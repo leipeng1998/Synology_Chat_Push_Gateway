@@ -200,38 +200,6 @@ def update_user_status(user_id,new_status):
     conn.commit()
     conn.close()
 
-def add_dsm_user_info(user_id,nickname,username,user_type):
-    try:
-        conn = sqlite3.connect(DB_FILE)
-        cursor = conn.cursor()
-
-        # 先检查用户是否存在
-        cursor.execute("SELECT id FROM user_info WHERE user_id = ?", (str(user_id)))
-        existing_user = cursor.fetchone()
-
-        if existing_user:
-            # 用户存在，更新记录（保持原ID）
-            cursor.execute("""
-            UPDATE push_users 
-            SET nickname = ?, username = ?, user_type=?
-            WHERE user_name = ?
-            """, (str(nickname), str(username), str(user_type)))
-            print(f"用户 {username}  nickname{nickname} 更新成功")
-        else:
-            # 用户不存在，插入新记录
-            cursor.execute("""
-            INSERT INTO push_users (user_id, nickname, username,user_type)
-            VALUES (?, ?, ?, ?)
-            """, (str(user_id), str(nickname), str(username), str(user_type)))
-            print(f"用户 {user_id} nickname{nickname} username{username} 插入成功")
-
-        conn.commit()
-    except sqlite3.Error as e:
-        print(f"写入用户 {username} 失败:", e)
-    finally:
-        if conn:
-            conn.close()
-
 
 def update_push_users_info(user_id, username, password, gotify_url, gotify_token):
     """
