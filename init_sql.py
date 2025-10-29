@@ -28,6 +28,7 @@ def init_db():
                     channel_type TEXT
                 )
                 """)
+        # user_id
         cursor.execute("""
                         CREATE TABLE IF NOT EXISTS user_info (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
