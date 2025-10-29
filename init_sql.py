@@ -7,6 +7,7 @@ def init_db():
     try:
         conn = sqlite3.connect(DB_FILE)
         cursor = conn.cursor()
+        # push_users
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS push_users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,6 +19,7 @@ def init_db():
             GOTIFY_TOKEN TEXT
         )
         """)
+        # channel_info
         cursor.execute("""
                 CREATE TABLE IF NOT EXISTS channel_info (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,11 +34,10 @@ def init_db():
         cursor.execute("""
                         CREATE TABLE IF NOT EXISTS user_info (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            is_banned INTEGER DEFAULT 0,
                             user_id TEXT UNIQUE,
-                            user_nickname TEXT,
-                            user_login_name TEXT,
-                            user_type TEXT
+                            nickname TEXT,
+                            username TEXT,
+                            type TEXT
                         )
                         """)
         conn.commit()
@@ -44,3 +45,7 @@ def init_db():
         print("数据库初始化错误:", e)
     finally:
         conn.close()
+
+
+def init_app():
+    pass
