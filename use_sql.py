@@ -165,6 +165,20 @@ def get_all_users_no_password():
     finally:
         if conn:
             conn.close()
+def get_all_users_password():
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_password FROM push_users")
+        users = cursor.fetchall()
+        # 就给个password
+        return users
+    except sqlite3.Error as e:
+        print(f"查询所有用户失败:", e)
+        return []
+    finally:
+        if conn:
+            conn.close()
 def get_user_info():
     try:
         conn = sqlite3.connect(DB_FILE)
@@ -551,3 +565,56 @@ def delete_system_config(config_key: str) -> bool:
         if conn:
             conn.close()
 
+
+def verify_user_password(user_id, password):
+    """验证用户密码"""
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+
+        # 修正：表名应该是 push_users，字段名是 user_password
+        cursor.execute(
+            'SELECT user_password FROM push_users WHERE id = ?', (user_id,)
+        )
+        user = cursor.fetchone()
+
+        # 修正：检查密码是否匹配
+        if user and user[0] == password:
+            return True
+        else:
+            return False
+
+    except sqlite3.Error as e:
+        logger.error(f"验证用户密码失败: {e}")
+        return False
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_user_by_id(user_id):
+    """根据ID获取用户信息"""
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+
+        # 修正：表名应该是 push_users
+        cursor.execute(
+            'SELECT * FROM push_users WHERE id = ?', (user_id,)
+        )
+        user = cursor.fetchone()
+
+        if user:
+            # 将结果转换为字典格式便于使用
+            columns = ['id', 'is_banned', 'user_name', 'user_password', 'sid', 'GOTIFY_URL', 'GOTIFY_TOKEN']
+            user_dict = dict(zip(columns, user))
+            return user_dict
+        else:
+            return None
+
+    except sqlite3.Error as e:
+        logger.error(f"获取用户信息失败: {e}")
+        return None
+    finally:
+        if conn:
+            conn.close()
