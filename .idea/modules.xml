@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/synology_chat_push_gateway.iml" filepath="$PROJECT_DIR$/.idea/synology_chat_push_gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Synology_Chat_push_gateway.iml" filepath="$PROJECT_DIR$/.idea/Synology_Chat_push_gateway.iml" />
     </modules>
   </component>
 </project>
