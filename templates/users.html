@@ -42,9 +42,9 @@
     <!-- 添加用户 -->
     <form class="add-form" method="POST" action="/add_user">
         <input type="text" name="username" class="form-control" placeholder="用户名" required>
-        <input type="text" name="password" class="form-control" placeholder="密码" required>
+        <input type="password" name="password" class="form-control" placeholder="密码" required>
 {#        <input type="text" name="sid" class="form-control" placeholder="SID">#}
-        <input type="text" name="gotify_url" class="form-control" placeholder="Gotify URL">
+        <input type="text" name="gotify_url" class="form-control" placeholder="Gotify URL:http(s)://域名(:端口)/message">
         <input type="text" name="gotify_token" class="form-control" placeholder="Gotify Token">
         <button class="btn btn-primary" type="submit">添加</button>
     </form>
@@ -143,14 +143,14 @@
             <!-- 密码 -->
             <div class="mb-3">
                 <label class="form-label">密码</label>
-                <input type="text" name="password" id="editPassword" class="form-control" placeholder="密码" required>
+                <input type="password" name="password" id="editPassword" class="form-control" placeholder="密码" required>
             </div>
 
             <!-- Gotify URL -->
             <div class="mb-3">
-                <label class="form-label">Gotify URL</label>
+                <label class="form-label">Gotify URL:http(s)://域名(:端口)/message</label>
                 <input type="text" name="gotify_url" id="editGotifyUrl" class="form-control" placeholder="Gotify URL">
-                <div class="form-text">Gotify 服务器地址</div>
+                <div class="form-text">Gotify 服务器地址:http(s)://域名(:端口)/message	A</div>
             </div>
 
             <!-- Gotify Token -->
