@@ -128,12 +128,18 @@ def index():
 def admin_users():
     if not ensure_database_integrity():
         return redirect(url_for("init_gateway"))
+    users = use_sql.get_all_users()
+    users_no_password = []
 
-    users = use_sql.get_all_users_no_password()
-    print(users)
-    print(type(users))
+    for user in users:
+        user2 = list(user)
+
+        del user2[3]
+        users_no_password.append(user2)
+
+
     FIELDS = ["ID", "是否启用", "用户名", "gotify_url", "gotify_token"]
-    return render_template("users.html", users=users, fields=FIELDS)
+    return render_template("users.html", users=users_no_password, fields=FIELDS )
 
 
 @app.route("/add_user", methods=["POST"])
@@ -172,8 +178,26 @@ def edit_user(user_id):
     password = request.form.get("password")
     gotify_url = request.form.get("gotify_url")
     gotify_token = request.form.get("gotify_token")
+
+    # 获取当前用户信息
+    user = use_sql.get_user_by_id(user_id)
+    if not user:
+        logger.warning(f"编辑用户失败: 用户ID {user_id} 不存在")
+        return redirect(url_for("admin_users"))
+
+    # 如果密码为空，保持原密码
+    if not password:
+        print(user)
+        password = user.get('user_password')  # ⚠️ 用 key 访问
     use_sql.update_push_users_info(user_id, username, password, gotify_url, gotify_token)
+
+    # 更新数据库
+    use_sql.update_push_users_info(user_id, username, password, gotify_url, gotify_token)
+
+    logger.info(f"用户 {user_id} 已更新")
     return redirect(url_for("admin_users"))
+
+
 
 
 @app.route("/init_gateway")
