@@ -206,26 +206,33 @@ def write_channel_info_sql(sid: str) -> None:
 def message_send(gotify_url: str, token: str, title: str, message: str) -> bool:
     """
     通过Gotify发送推送消息
-
-    Args:
-        gotify_url: Gotify服务器URL
-        token: Gotify访问令牌
-        title: 消息标题
-        message: 消息内容
-
-    Returns:
-        bool: 发送是否成功
     """
     logger.debug(f"准备发送Gotify消息，标题: {title}")
+
+    # 确保消息不为空
+    if not message:
+        message = '[请打开群晖chat查看]'
+        logger.debug("消息为空，使用默认消息")
 
     payload = {
         "title": title,
         "message": message,
-        "priority": 2
+        "priority": 8
     }
 
+    # 构建完整的URL
+    url = f"{gotify_url}?token={token}"
+
+    logger.debug(f"发送到URL: {url}")
+    logger.debug(f"Payload内容: {payload}")
+
     try:
-        resp = requests.post(f"{gotify_url}?token={token}", data=payload, timeout=REQUEST_TIMEOUT)
+        resp = requests.post(url, json=payload, timeout=REQUEST_TIMEOUT)
+
+        logger.debug(f"响应状态码: {resp.status_code}")
+        logger.debug(f"响应头: {resp.headers}")
+        logger.debug(f"响应内容: {resp.text}")
+
         result = resp.json()
 
         if resp.status_code == 200:
@@ -238,8 +245,9 @@ def message_send(gotify_url: str, token: str, title: str, message: str) -> bool:
     except requests.exceptions.RequestException as e:
         logger.error(f"Gotify请求失败: {str(e)}")
         return False
-
-
+    except Exception as e:
+        logger.error(f"未知错误: {str(e)}")
+        return False
 def get_channels(sid: str) -> List[Dict[str, Any]]:
     """
     获取用户的所有频道信息（包含未读消息数）
@@ -545,7 +553,8 @@ def process_channel_messages(sid: str, channel_id: str, channel_name: str, user_
 
         # 获取所有未读消息
         unread_messages = get_unread_messages(sid, channel_id, unread_count)
-        print(unread_messages)
+        # print(unread_messages.encode("utf-8", errors="ignore").decode("utf-8"))
+
         if not unread_messages:
             logger.debug(f"频道 {channel_name} 没有未推送的新消息")
             return False
